@@ -1,25 +1,21 @@
 import authService from "../services/AuthService.js";
 
 class AuthController {
-  async register(req, res) {
-    try {
-      const user = await authService.register(req.body);
-      res.status(201).json({ message: "User created", user: { email: user.email, username: user.username } });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
-    }
-  }
-
   async login(req, res) {
     try {
       const { token, user } = await authService.login(req.body);
-      res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "Lax",
-        maxAge: 24 * 60 * 60 * 1000,
-      }).json({ message: "Logged in", user: { email: user.email, username: user.username } });
+      res.status(200).json({ message: "Logged in", token, user });
     } catch (err) {
       res.status(401).json({ error: err.message });
+    }
+  }
+  
+  async register(req, res) {
+    try {
+      const { token, user } = await authService.register(req.body);
+      res.status(201).json({ message: "User created", token, user });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
     }
   }
 
